@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick your use case — Build your AI team · e& PPF Hungary</title>
+<style>
+  :root{
+    --bg:#FAF7F1; --bg2:#EEF0FB; --card:#fff; --navy:#2C3F8E; --navy-deep:#0F1632;
+    --cyan:#5BC4D2; --cyan-dk:#2C3F8E; --cyan-soft:#E8F7FA; --ink:#1A2240; --text2:#4B5563;
+    --muted:#6B7280; --border:#E5E7EB; --green:#10B981; --green-l:#ECFDF5; --amber:#B45309;
+    --amber-l:#FFF8ED; --red:#DC2626; --red-l:#FEF2F2;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --mono:"SF Mono",Monaco,"Cascadia Code",monospace;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-font-smoothing:antialiased;}
+  body{background:var(--navy-deep);color:var(--ink);font-family:var(--font);overflow:hidden;height:100vh;width:100vw;}
+  .deck{width:100vw;height:100vh;position:relative;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 60px 58px;opacity:0;pointer-events:none;transition:opacity .4s ease;background:var(--bg);overflow:hidden;}
+  .slide.active{opacity:1;pointer-events:auto;}
+  .inner{max-width:1180px;width:100%;}
+
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan-dk);margin-bottom:11px;}
+  .h{font-size:clamp(23px,2.7vw,33px);font-weight:800;letter-spacing:-.015em;line-height:1.16;color:var(--ink);display:flex;align-items:center;gap:13px;flex-wrap:wrap;}
+  .h .accent{color:var(--cyan-dk);}
+  .lead{font-size:16.5px;line-height:1.55;color:var(--text2);max-width:940px;} .lead b{color:var(--ink);}
+  .shead{margin-bottom:18px;} .shead .h{margin-top:4px;}
+
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--cyan);z-index:200;transition:width .4s ease;}
+  .counter{position:fixed;top:18px;right:26px;font-size:13px;font-weight:600;color:var(--muted);z-index:100;opacity:0;transition:opacity .4s;}
+  .counter.on{opacity:1;}
+  .zone{position:fixed;top:0;width:10%;height:100%;z-index:50;cursor:pointer;} .zone--prev{left:0;} .zone--next{right:0;}
+  .brand{position:fixed;bottom:14px;right:18px;z-index:100;} .brand img{height:18px;background:#fff;padding:6px 10px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.14);display:block;}
+  .fs{position:fixed;bottom:14px;left:18px;z-index:100;width:31px;height:31px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.92);color:var(--navy);font-size:14px;cursor:pointer;}
+  .fs:hover{border-color:var(--cyan);}
+
+  .dark{background:linear-gradient(135deg,#0F1632 0%,#2D3666 100%);}
+  .dark .eyebrow{color:var(--cyan);} .dark .h{color:#fff;} .dark .accent{color:var(--cyan);}
+  .cover{background:radial-gradient(ellipse at 30% 25%,#2D3666 0%,#0A0A1A 100%);text-align:center;}
+  .cover__logo{margin-bottom:24px;} .cover__logo img{height:46px;background:#fff;padding:12px 20px;border-radius:13px;box-shadow:0 12px 34px rgba(0,0,0,.28);}
+  .badge{display:inline-flex;gap:8px;align-items:center;background:rgba(91,196,210,.14);border:1px solid rgba(91,196,210,.35);color:var(--cyan);padding:9px 22px;border-radius:100px;font-size:13.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;}
+  .cover h1{font-size:clamp(38px,5vw,64px);color:#fff;line-height:1.04;max-width:920px;margin:0 auto 16px;font-weight:800;letter-spacing:-.025em;}
+  .cover h1 .accent{color:var(--cyan);}
+  .cover p{max-width:740px;margin:0 auto 26px;font-size:18px;color:rgba(255,255,255,.62);line-height:1.6;} .cover p b{color:#fff;}
+  .chips{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .chip{display:inline-flex;gap:9px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:10px 20px;font-size:14.5px;color:rgba(255,255,255,.82);} .chip b{color:#fff;}
+  .foot{margin-top:28px;font-size:13px;color:rgba(255,255,255,.4);letter-spacing:.03em;}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+  .card.top{border-top:4px solid var(--cyan);}
+  .c2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .c3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .card .tag{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan-dk);margin-bottom:8px;}
+  .card .t{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin-bottom:7px;display:flex;align-items:center;gap:9px;}
+  .card .d{font-size:14px;line-height:1.5;color:var(--text2);} .card .d b{color:var(--ink);}
+  .card ul{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+  .card li{font-size:13.5px;color:var(--ink);padding-left:18px;position:relative;line-height:1.4;}
+  .card li::before{content:'▸';position:absolute;left:0;color:var(--cyan-dk);font-weight:700;}
+
+  .banner{margin-top:16px;background:var(--navy);color:#fff;border-radius:13px;padding:14px 20px;display:flex;gap:13px;align-items:center;font-size:14.5px;line-height:1.45;} .banner b{color:var(--cyan);} .banner .ic{font-size:19px;}
+
+  .stg{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff;padding:4px 10px;border-radius:100px;}
+  .stg--basic{background:#3B5BA9;} .stg--intermediate{background:var(--amber);} .stg--advanced{background:var(--cyan-dk);} .stg--setup{background:var(--muted);}
+
+  .pipe{display:flex;gap:10px;align-items:stretch;}
+  .pstep{flex:1;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:17px 15px;text-align:center;}
+  .pstep .pi{font-size:25px;margin-bottom:8px;} .pstep .pt{font-size:15px;font-weight:800;color:var(--ink);line-height:1.2;margin-bottom:5px;}
+  .pstep .pd{font-size:12.5px;color:var(--text2);line-height:1.4;}
+  .parrow{align-self:center;color:var(--cyan);font-weight:800;font-size:18px;}
+
+  /* persona grid */
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px;}
+  .prow{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:0 11px 11px 0;padding:11px 15px;}
+  .prow.full{grid-column:1 / -1;border-left-color:var(--amber);}
+  .prow .pl{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-dk);margin-bottom:3px;}
+  .prow.full .pl{color:var(--amber);}
+  .prow .pv{font-size:14.5px;color:var(--ink);line-height:1.4;font-weight:600;}
+
+  /* data sources table */
+  .dsrc{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .dsrc th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--cyan-dk);padding:11px 14px;background:var(--cyan-soft);border-bottom:1px solid var(--border);}
+  .dsrc td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;line-height:1.4;}
+  .dsrc tr:last-child td{border-bottom:0;}
+  .dsrc td.doc{font-family:var(--mono);font-size:12px;color:var(--navy);font-weight:700;white-space:nowrap;}
+  .dsrc td.use{white-space:nowrap;font-weight:700;color:var(--cyan-dk);font-size:12px;}
+
+  /* meetings grid */
+  .mtgs{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+  .mtg{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--cyan);border-radius:13px;padding:14px 15px;display:flex;flex-direction:column;}
+  .mtg .mh{font-size:15px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .mtg .mw{font-size:11.5px;color:var(--cyan-dk);font-weight:700;margin:3px 0 7px;}
+  .mtg .mc{font-size:12px;color:var(--text2);line-height:1.42;flex:1;}
+  .mtg .mp{margin-top:9px;font-size:11.5px;color:var(--navy);background:var(--bg2);border-radius:8px;padding:7px 10px;font-style:italic;}
+  .mtg .mp b{font-style:normal;font-weight:700;color:var(--cyan-dk);}
+
+  /* diagram */
+  .diagram{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 18px;width:100%;height:clamp(310px,46vh,480px);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 34px rgba(15,22,50,.07);}
+  .diagram svg{width:100%;height:100%;max-height:100%;}
+  .anim-svg [data-step]{opacity:0;transform:scale(.94);transform-origin:center;transform-box:fill-box;}
+  .slide.active .anim-svg [data-step]{animation:pop .55s cubic-bezier(.3,.1,.3,1.15) forwards;}
+  .slide.active .anim-svg [data-step="1"]{animation-delay:.15s;} .slide.active .anim-svg [data-step="2"]{animation-delay:.4s;}
+  .slide.active .anim-svg [data-step="3"]{animation-delay:.65s;} .slide.active .anim-svg [data-step="4"]{animation-delay:.9s;}
+  .slide.active .anim-svg [data-step="5"]{animation-delay:1.15s;} .slide.active .anim-svg [data-step="6"]{animation-delay:1.4s;}
+  @keyframes pop{to{opacity:1;transform:scale(1);}}
+
+  /* team select */
+  .pick4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .tcard{text-align:left;background:var(--card);border:1px solid var(--border);border-top:4px solid var(--cyan);border-radius:16px;padding:22px 18px;font-family:inherit;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;min-height:190px;}
+  .tcard:hover{border-color:var(--cyan);box-shadow:0 12px 30px rgba(91,196,210,.2);transform:translateY(-3px);}
+  .tcard .tn{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-dk);}
+  .tcard .tname{font-size:25px;font-weight:800;color:var(--ink);line-height:1.1;margin:8px 0 8px;}
+  .tcard .tt{font-size:13px;color:var(--text2);line-height:1.4;flex:1;}
+  .tcard .go{margin-top:13px;font-size:14px;font-weight:800;color:var(--cyan-dk);}
+
+  /* mission / roster */
+  .roster{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 4px;}
+  .rchip{display:inline-flex;align-items:center;gap:7px;background:var(--cyan-soft);border:1px solid #BFE7EE;border-radius:100px;padding:9px 16px;font-size:15px;font-weight:600;color:var(--ink);}
+  .pick{display:grid;grid-template-columns:1fr;gap:18px;max-width:640px;}
+  .missiongrid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:stretch;}
+  .missiongrid .pick{max-width:none;}
+  .missiongrid .pcard{height:100%;}
+  .pathcard{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--cyan);border-radius:16px;padding:22px;display:flex;flex-direction:column;}
+  .pathhd{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-dk);margin-bottom:14px;}
+  .pathlist{list-style:none;display:flex;flex-direction:column;gap:13px;}
+  .pathlist li{font-size:15px;color:var(--ink);line-height:1.4;} .pathlist li b{color:var(--navy);}
+  .pathhint{margin-top:auto;padding-top:18px;font-size:14px;font-weight:800;color:var(--cyan-dk);}
+  .pcard{text-align:left;background:var(--card);border:1px solid var(--border);border-top:4px solid var(--cyan);border-radius:16px;padding:22px;font-family:inherit;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;}
+  .pcard:hover{border-color:var(--cyan);box-shadow:0 12px 30px rgba(91,196,210,.2);transform:translateY(-3px);}
+  .pcard .fn{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-dk);}
+  .pcard .ag{font-size:23px;font-weight:800;color:var(--ink);line-height:1.12;margin:7px 0 7px;}
+  .pcard .pd{font-size:14.5px;color:var(--text2);line-height:1.5;}
+  .pcard .tags{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap;}
+  .ptag{font-size:11.5px;font-weight:700;color:var(--cyan-dk);background:var(--cyan-soft);border:1px solid #BFE7EE;border-radius:100px;padding:5px 11px;}
+  .pcard .go{margin-top:13px;font-size:14px;font-weight:800;color:var(--cyan-dk);}
+  .pickback{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--cyan-dk);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-bottom:11px;}
+  .pickback:hover{text-decoration:underline;}
+
+  /* progressive build steps */
+  .stagebar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .stagebar .sb{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 13px;}
+  .stagebar .sb.on{color:#fff;border-color:transparent;}
+  .stagebar .sb.on.setup{background:var(--muted);} .stagebar .sb.on.basic{background:#3B5BA9;} .stagebar .sb.on.intermediate{background:var(--amber);} .stagebar .sb.on.advanced{background:var(--cyan-dk);}
+  .ubuild{max-width:900px;}
+  .usteps{display:flex;flex-direction:column;gap:11px;}
+  .ustep{display:grid;grid-template-columns:30px 1fr;gap:14px;align-items:start;padding:15px 17px;border:1px solid var(--border);border-radius:13px;background:var(--card);animation:reveal .35s ease;}
+  .ustep.locked{display:none;}
+  .ustep.active{border-color:var(--cyan);box-shadow:0 8px 22px rgba(91,196,210,.16);}
+  .ustep .un{width:28px;height:28px;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+  .ustep.active .un{background:var(--cyan-dk);}
+  .ustep .ut{font-size:15.5px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+  .ustep .ud{font-size:13.5px;color:var(--text2);line-height:1.5;} .ustep .ud b{color:var(--navy);}
+  @keyframes reveal{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .paste{margin-top:11px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;}
+  .paste .px{flex:1;font-family:var(--mono);font-size:12px;color:var(--ink);line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+  .paste .cpb{flex-shrink:0;border:1px solid var(--border);background:#fff;color:var(--navy);font-size:11px;font-weight:700;padding:6px 11px;border-radius:7px;cursor:pointer;white-space:nowrap;}
+  .paste .cpb:hover{border-color:var(--cyan);color:var(--cyan-dk);}
+  .unext{margin-top:14px;display:flex;align-items:center;gap:14px;}
+  .unlocknext{background:var(--cyan-dk);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;}
+  .unlocknext:hover{background:var(--navy-deep);}
+  .unlocknext.done{background:var(--green-l);color:var(--green);cursor:default;border:1px solid #bbf7d0;}
+  .uprog{font-size:12.5px;color:var(--muted);font-weight:600;}
+  .slide.bld{justify-content:flex-start;overflow-y:auto;padding-top:38px;padding-bottom:76px;}
+  .slide.bld::-webkit-scrollbar{width:8px;} .slide.bld::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:8px;}
+  .bguide2{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:start;width:100%;}
+  .ubleft{min-width:0;}
+  .pastecol{display:flex;flex-direction:column;gap:11px;border:1px solid var(--border);border-top:3px solid var(--cyan);border-radius:14px;padding:16px;background:rgba(255,255,255,.55);position:sticky;top:0;}
+  .pastehd{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-dk);}
+  .pasteitem.locked{display:none;}
+  .pasteitem{animation:reveal .35s ease;}
+  .pilab{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  .pasteitem .paste{margin-top:0;}
+
+  .why{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .wc{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:20px 22px;}
+  .wc .i{font-size:24px;margin-bottom:9px;} .wc .t{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;} .wc .d{font-size:15px;color:rgba(255,255,255,.62);line-height:1.5;} .wc .d b{color:var(--cyan);}
+
+  /* bottom nav bar */
+  .nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;background:rgba(0,0,0,.55);padding:8px 14px;border-radius:999px;backdrop-filter:blur(10px);z-index:120;}
+  .nav button{background:rgba(255,255,255,.15);border:0;color:#fff;width:30px;height:30px;border-radius:999px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+  .nav button:hover{background:rgba(255,255,255,.3);}
+  .nav .count{color:#fff;font-size:12px;padding:0 12px;font-variant-numeric:tabular-nums;font-weight:600;}
+  .nav .dots{display:flex;gap:4px;align-items:center;max-width:44vw;overflow-x:auto;margin:0 4px;}
+  .nav .dots::-webkit-scrollbar{display:none;}
+  .nav .dot{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.3);transition:all .3s;cursor:pointer;flex-shrink:0;}
+  .nav .dot.active{background:var(--cyan);width:20px;}
+
+  .tcard .tnames{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
+  .namebtn{text-align:left;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--cyan-soft);border:1px solid #BFE7EE;border-radius:9px;padding:9px 13px;cursor:pointer;transition:all .15s;}
+  .namebtn:hover{background:var(--cyan-dk);color:#fff;border-color:var(--cyan-dk);transform:translateX(3px);}
+  .ctarow{margin-top:20px;display:flex;}
+  .contbtn{background:var(--cyan-dk);color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14.5px;font-weight:800;font-family:inherit;cursor:pointer;}
+  .contbtn:hover{background:var(--navy-deep);}
+  .paste .px{max-height:128px;overflow:auto;}
+
+  /* learner view: CTA-only — no nav chrome, no arrow/edge/swipe navigation */
+  .nav{display:none!important;}
+  .counter{display:none!important;}
+  .zone{display:none!important;}
+
+  @media print{ @page{size:1280px 720px;margin:0;} .slide{page-break-after:always;opacity:1!important;pointer-events:auto!important;position:relative!important;} .ustep.locked{display:grid!important;} .progress,.brand,.fs,.counter,.zone,.nav{display:none!important;} }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 0 · COVER -->
+  <div class="slide cover active">
+    <div class="inner">
+      <div class="cover__logo"><img src="acceler_logo.png" alt="acceler"></div>
+      <div class="badge">Build your AI team · e& PPF Hungary</div>
+      <h1>Pick your <span class="accent">use case</span></h1>
+      <p>Find your team, see your mission, and build your agent in <b>Microsoft Copilot Studio</b> — one step at a time.</p>
+      <div class="chips">
+        <span class="chip">👥 <b>4 teams</b> · pre-assigned</span>
+        <span class="chip">🤖 <b>1 agent</b> per team</span>
+        <span class="chip">🛠️ <b>Copilot Studio</b></span>
+      </div>
+      <div style="margin-top:32px;"><button data-goto="1" style="background:var(--cyan);color:var(--navy-deep);border:none;border-radius:12px;padding:15px 40px;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer;">Get started →</button></div>
+    </div>
+  </div>
+
+  <!-- 1 · HOW IT WORKS -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <div class="shead"><div class="eyebrow">How the next hour works</div><div class="h">The next hour is <span class="accent">yours</span></div></div>
+      <div class="c2">
+        <div class="card top"><div class="t">🕐 Build your own</div><div class="d">Each of you builds <b>your own agent</b>, on your own account — start to finish.</div></div>
+        <div class="card top"><div class="t">🪜 Step by step</div><div class="d">One field at a time — <b>Basic → Intermediate → Advanced</b>. The guide walks you through it.</div></div>
+        <div class="card top"><div class="t">👥 You're in teams</div><div class="d">Seated together — <b>help each other</b> as you go.</div></div>
+        <div class="card top"><div class="t">🧭 Build Coach on the floor</div><div class="d">Stuck on anything? A <b>Build Coach</b> is right there — just ask.</div></div>
+      </div>
+      <div class="ctarow"><button class="contbtn" data-goto="2" style="padding:14px 36px;font-size:16px;">Find your team →</button></div>
+    </div>
+  </div>
+
+  <!-- 2 · CHOOSE YOUR TEAM -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <div class="shead"><div class="eyebrow">Step 1 · find yourself</div><div class="h">Tap <span class="accent">your name</span> to begin</div></div>
+      <div class="pick4" id="teamPicker"></div>
+      <div class="banner"><span class="ic">🧩</span><div>Find your name under your team and tap it. <b>Your use case is assigned</b> — you'll only see your own build.</div></div>
+    </div>
+  </div>
+
+  <!-- 2 · YOUR TEAM & MISSION (dynamic) -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="2">↩ Pick a different team</button>
+      <div class="shead"><div class="eyebrow" id="missionWelcome">Your team</div><div class="h" id="missionTeam">—</div></div>
+      <div class="roster" id="missionMembers"></div>
+      <div class="eyebrow" style="margin-top:20px;">Your mission · build this agent</div>
+      <div class="missiongrid">
+        <div class="pick" id="missionCard"></div>
+        <div class="pathcard">
+          <div class="pathhd">What's ahead</div>
+          <ul class="pathlist">
+            <li>🧭 <b>Understand</b> — your persona &amp; what the agent does</li>
+            <li>🎯 <b>The end goal</b> — what a finished agent returns</li>
+            <li>🛠️ <b>Build it</b> — Setup → Basic → Intermediate → Advanced</li>
+            <li>📣 <b>Publish</b> — share it to Teams when you're done</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ctarow" style="justify-content:center;margin-top:24px;"><button class="contbtn" data-next style="padding:14px 40px;font-size:16px;">Start building →</button></div>
+    </div>
+  </div>
+
+  <!-- ============ MEETING PREP (teams 1 & 2) · 3-11 ============ -->
+
+  <!-- 3 · MEP PERSONA -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Yettel Meeting Prep · your persona</div><div class="h">You are the <span class="accent">CEO</span></div></div>
+      <p class="lead">You lead <b>4,200 people</b> across CEE markets, mid-transformation to a <b>digital connectivity platform</b>. You walk into meetings across six functions with no time to prep — you need what matters, what's open, and what to say <b>in under two minutes</b>.</p>
+      <div class="pgrid">
+        <div class="prow"><div class="pl">Role</div><div class="pv">Chief Executive Officer (CEO)</div></div>
+        <div class="prow"><div class="pl">Company</div><div class="pv">Top-3 CEE telecom — Hungary, Bulgaria &amp; other CEE markets</div></div>
+        <div class="prow"><div class="pl">Direct reports</div><div class="pv">CCO · CFO · CPO · CTO · CLO · CSO</div></div>
+        <div class="prow"><div class="pl">Reports to</div><div class="pv">Group CEO (Marcus Weber) · Group Board</div></div>
+        <div class="prow full"><div class="pl">Biggest challenge right now</div><div class="pv">4iG fixed-mobile convergence bundle launching Q4 — decision on the fixed-network partnership needed by Q3.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · MEP WHAT THE AGENT DOES -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · what the agent does</div><div class="h">One outcome: <span class="accent">walk in prepared</span></div></div>
+      <p class="lead" style="margin-bottom:16px;">Tell the agent which meeting you're about to walk into — or ask what's on your calendar today. It returns a structured brief in <b>under 60 seconds</b>: who you're meeting, what's open, what you need to know, and how to open.</p>
+      <div class="pipe">
+        <div class="pstep"><div class="pi">🗓️</div><div class="pt">1 · Reads your calendar</div><div class="pd">Finds the meeting — who, when, what it's about.</div></div>
+        <div class="parrow">→</div>
+        <div class="pstep"><div class="pi">📧</div><div class="pt">2 · Searches your email</div><div class="pd">Recent threads, open items, commitments related to it.</div></div>
+        <div class="parrow">→</div>
+        <div class="pstep"><div class="pi">📄</div><div class="pt">3 · Returns a brief</div><div class="pd">Context, recent activity, what to know, how to open.</div></div>
+      </div>
+      <div class="banner"><span class="ic">📧</span><div>Every response is <b>automatically emailed</b> to your inbox — you don't need to ask, it always arrives.</div></div>
+    </div>
+  </div>
+
+  <!-- 5 · MEP DATA & KNOWLEDGE SOURCES -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · data &amp; knowledge sources</div><div class="h">Three layers <span class="accent">power the brief</span></div></div>
+      <table class="dsrc">
+        <thead><tr><th>Document</th><th>What it contains</th><th>Used by</th></tr></thead>
+        <tbody>
+          <tr><td class="doc">CEO_01_Strategic_Context</td><td>Company vision, 2026 strategic priorities, cross-functional open items, external competitive context.</td><td class="use">Both agents</td></tr>
+          <tr><td class="doc">CEO_02_Leadership_Team</td><td>ExCo profiles — roles, what each person owns, open items with each leader.</td><td class="use">Meeting Prep</td></tr>
+          <tr><td class="doc">CEO_03_ExCo_Tracker</td><td>Open decisions, pending actions, ExCo meeting agenda and status tracker.</td><td class="use">Meeting Prep</td></tr>
+          <tr><td class="doc">Work IQ — Email</td><td>Live threads: HR departure risk, CFO board prep, CTO overrun, legal/regulatory, strategy, commercial.</td><td class="use">Meeting Prep</td></tr>
+          <tr><td class="doc">Work IQ — Calendar</td><td>Upcoming meetings: ExCo, 1:1 CHRO, Board Prep, Regulatory, Group CEO call, Vendor escalation.</td><td class="use">Meeting Prep</td></tr>
+        </tbody>
+      </table>
+      <div class="banner"><span class="ic">🧭</span><div>Uploaded docs + <b>Work IQ</b> (live email &amp; calendar) = a brief grounded in what's actually happening.</div></div>
+    </div>
+  </div>
+
+  <!-- 6 · MEP UPCOMING MEETINGS -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · your week</div><div class="h">Ask it to brief you <span class="accent">before any of these</span></div></div>
+      <div class="mtgs">
+        <div class="mtg"><div class="mh">📊 Weekly ExCo</div><div class="mw">Full ExCo · HQ Board Room</div><div class="mc">Six agenda items — four red/amber: CentroMed escalation, 4iG convergence, Q2 pipeline shortfall, network overrun, departure risk, EastPharma.</div><div class="mp"><b>Try:</b> "Brief me before my ExCo meeting tomorrow"</div></div>
+        <div class="mtg"><div class="mh">👥 1:1 with CPO</div><div class="mw">Miriam Varga · CEO Office</div><div class="mc">Senior engineering departure risk — two external approaches. Engagement survey below target. Two ExCo role gaps. Retention package to review.</div><div class="mp"><b>Try:</b> "Prep me for my 1:1 with Miriam"</div></div>
+        <div class="mtg"><div class="mh">💰 Board Prep — Q2</div><div class="mw">Petra Novak · Video call</div><div class="mc">Align board narrative. Q2 97% overall, B2B 94%. Network overrun €2.1M hitting EBITDA. Front-load the challenge or lead with consumer outperformance?</div><div class="mp"><b>Try:</b> "What do I need going into the board prep call"</div></div>
+        <div class="mtg"><div class="mh">⚖️ Regulatory Meeting</div><div class="mw">National Regulator · Regulator HQ</div><div class="mc">Spectrum renewal coverage obligations, CentroMed outage on their radar, net-neutrality check. Lead with the 5G milestone.</div><div class="mp"><b>Try:</b> "Brief me before the regulatory meeting"</div></div>
+        <div class="mtg"><div class="mh">🌍 Group CEO Call</div><div class="mw">Marcus Weber · Video call</div><div class="mc">Preview the July board presentation. CEE competitive landscape, digital transformation progress, H2 revenue confidence. The board wants to be excited about CEE.</div><div class="mp"><b>Try:</b> "Prep me for the Group CEO call"</div></div>
+        <div class="mtg"><div class="mh">🔧 Vendor Escalation</div><div class="mw">CTO + Vendor VP · Video call</div><div class="mc">CEO-level escalation — pricing deadlock and SLA dispute. Healthcare SLA protection is non-negotiable. Confirm the walk-away position with the CTO.</div><div class="mp"><b>Try:</b> "What do I need before the vendor escalation call"</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 · MEP WORKFLOW -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · the end goal</div><div class="h">What you're <span class="accent">building toward</span></div></div>
+      <div class="diagram">
+        <svg class="anim-svg" viewBox="0 0 1000 380" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+          <defs>
+            <linearGradient id="mecore" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2C3F8E"/><stop offset="100%" stop-color="#5BC4D2"/></linearGradient>
+            <marker id="mef" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1A2240"/></marker>
+            <marker id="meg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#10B981"/></marker>
+          </defs>
+          <g data-step="1">
+            <rect x="12" y="120" width="158" height="52" rx="11" fill="#FFF8ED" stroke="#B45309" stroke-width="2"/>
+            <text x="91" y="142" text-anchor="middle" fill="#B45309" font-size="11" font-weight="800">🕘 9:00 AM daily</text>
+            <text x="91" y="159" text-anchor="middle" fill="#1A2240" font-size="9.5">today's calendar</text>
+            <rect x="12" y="184" width="158" height="52" rx="11" fill="#D8DCEF" stroke="#2C3F8E" stroke-width="2"/>
+            <text x="91" y="206" text-anchor="middle" fill="#2C3F8E" font-size="11" font-weight="800">💬 You name</text>
+            <text x="91" y="223" text-anchor="middle" fill="#1A2240" font-size="9.5">a meeting</text>
+          </g>
+          <g data-step="2"><line x1="172" y1="180" x2="248" y2="180" stroke="#1A2240" stroke-width="2.5" marker-end="url(#mef)"/></g>
+          <g data-step="3">
+            <rect x="254" y="34" width="470" height="312" rx="20" fill="#F4F6FC" stroke="#2C3F8E" stroke-width="2.5" stroke-dasharray="6,4"/>
+            <text x="489" y="60" text-anchor="middle" fill="#2C3F8E" font-size="13" font-weight="800" letter-spacing="2">MEETING PREP AGENT</text>
+            <rect x="274" y="76" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="374" y="100" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">🗓️ Calendar — find meeting</text>
+            <rect x="502" y="76" width="200" height="38" rx="8" fill="#fff" stroke="#B45309" stroke-width="1.4"/><text x="602" y="100" text-anchor="middle" fill="#B45309" font-size="10.5" font-weight="700">📧 Email — search threads</text>
+            <rect x="274" y="300" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="374" y="324" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">👥 Leadership team</text>
+            <rect x="502" y="300" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="602" y="324" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">✅ ExCo tracker</text>
+          </g>
+          <g data-step="4">
+            <circle cx="489" cy="196" r="58" fill="url(#mecore)"/>
+            <text x="489" y="191" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">CROSS-REFERENCE</text>
+            <text x="489" y="208" text-anchor="middle" fill="rgba(255,255,255,.88)" font-size="9.5">meeting + context</text>
+            <text x="489" y="222" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8.5">🎯 strategic context</text>
+          </g>
+          <g data-step="5"><line x1="725" y1="190" x2="805" y2="190" stroke="#10B981" stroke-width="2.5" marker-end="url(#meg)"/></g>
+          <g data-step="6">
+            <rect x="814" y="96" width="176" height="190" rx="13" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+            <text x="902" y="121" text-anchor="middle" fill="#10B981" font-size="11" font-weight="800">MEETING BRIEF</text>
+            <text x="828" y="150" fill="#1A2240" font-size="10.5">① Who you're meeting</text>
+            <text x="828" y="176" fill="#1A2240" font-size="10.5">② What's open</text>
+            <text x="828" y="202" fill="#1A2240" font-size="10.5">③ What to know</text>
+            <text x="828" y="228" fill="#1A2240" font-size="10.5">④ How to open</text>
+            <text x="902" y="266" text-anchor="middle" fill="#10B981" font-size="10.5" font-weight="700">📧 auto-emailed</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 · MEP BUILD · SETUP -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · build</div><div class="h"><span class="stg stg--setup">Setup</span> Stand up the agent</div></div>
+      <div class="stagebar"><span class="sb on setup">Setup</span><span class="sb">Stage 1</span><span class="sb">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Create the agent</div><div class="ud">In Copilot Studio: <b>Create → New agent → Configure</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Name it</div><div class="ud">Give it a clear, ownable name.</div><div class="paste"><div class="px">Yettel Meeting Prep</div><button class="cpb" data-copy="Yettel Meeting Prep">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Add the Instructions</div><div class="ud">Paste the agent's brief — we break it into plain blocks on the <b>next screen →</b></div></div></div>
+          <div class="ustep"><div class="un">4</div><div><div class="ut">Add Knowledge</div><div class="ud">Upload the three docs under <b>Knowledge</b>.</div><div class="paste"><div class="px">CEO_01_Strategic_Context
+CEO_02_Leadership_Team
+CEO_03_ExCo_Tracker</div><button class="cpb" data-copy="CEO_01_Strategic_Context, CEO_02_Leadership_Team, CEO_03_ExCo_Tracker">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">5</div><div><div class="ut">Set the toggles</div><div class="ud"><b>Web search OFF</b> — your sources only.</div></div></div>
+          <div class="ustep"><div class="un">6</div><div><div class="ut">Add starter prompts</div><div class="ud">Give the room quick ways in.</div><div class="paste"><div class="px">Prep me for my 1:1 with Miriam
+What's on my calendar today?
+Brief me on board prep with the CFO</div><button class="cpb" data-copy="Prep me for my 1:1 with Miriam | What's on my calendar today? | Brief me on board prep with the CFO">📋 Copy</button></div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8b · MEP BUILD · INSTRUCTIONS -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · build · the instructions</div><div class="h"><span class="stg stg--setup">Setup</span> The Instructions, in four blocks</div></div>
+      <div class="c2">
+        <div class="card top"><div class="t">🎭 Who it is</div><div class="d">"You are <b>Yettel Meeting Prep</b> for the CEO."</div></div>
+        <div class="card top"><div class="t">❓ Ask first</div><div class="d">If <b>no meeting is named</b>, ask which one before answering.</div></div>
+        <div class="card top"><div class="t">📋 What to return</div><div class="d"><b>Who</b> you're meeting &amp; what they own · <b>what's open</b> · <b>what to know</b> · <b>how to open</b>.</div></div>
+        <div class="card top"><div class="t">🧱 Rules</div><div class="d">Use <b>only the knowledge</b> (Stage 2: also live email &amp; calendar). Keep it to a <b>2-minute read</b>.</div></div>
+      </div>
+      <div class="paste" style="margin-top:16px;"><div class="px">You are Yettel Meeting Prep for the CEO. If no meeting is named, ask which one. For the named meeting return: who you're meeting & what they own · what's open · what to know · how to open. Use only the knowledge (Stage 2: also live email & calendar). Keep it to a 2-minute read.</div><button class="cpb" data-copy="You are Yettel Meeting Prep for the CEO. If no meeting is named, ask which one. For the named meeting return: who you're meeting & what they own · what's open · what to know · how to open. Use only the knowledge (Stage 2: also live email & calendar). Keep it to a 2-minute read.">📋 Copy full</button></div>
+    </div>
+  </div>
+
+  <!-- 9 · MEP BUILD · STAGE 1 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · build</div><div class="h"><span class="stg stg--basic">Stage 1 · Basic</span> Q&amp;A from knowledge</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb on basic">Stage 1</span><span class="sb">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Open the Test panel</div><div class="ud">Top-right in Copilot Studio. Give the knowledge a moment to index.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Ask a knowledge question</div><div class="ud">It should answer from the docs — no connectors yet.</div><div class="paste"><div class="px">Brief me before my ExCo tomorrow.</div><button class="cpb" data-copy="Brief me before my ExCo tomorrow.">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Check what good looks like</div><div class="ud">Names the attendee &amp; what they own, cites the <b>ExCo tracker</b>, lists what's open and pending — grounded only in the knowledge.</div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 · MEP BUILD · STAGE 2 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · build</div><div class="h"><span class="stg stg--intermediate">Stage 2 · Intermediate</span> Live brief in your inbox</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb">Stage 1</span><span class="sb on intermediate">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Connect Work IQ</div><div class="ud">Add sources: <b>My emails (Outlook)</b> + <b>My calendar</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Add the live-data instruction</div><div class="ud">Append to Instructions so it finds the event and emails the brief.</div><div class="paste"><div class="px">Find the meeting on my calendar and read related email threads. After answering, email me the brief in clean HTML.</div><button class="cpb" data-copy="Find the meeting on my calendar and read related email threads. After answering, email me the brief in clean HTML.">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Test it live</div><div class="ud">It finds the event, pulls threads, and emails the brief.</div><div class="paste"><div class="px">Prep me for my 1:1 with Miriam.</div><button class="cpb" data-copy="Prep me for my 1:1 with Miriam.">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">4</div><div><div class="ut">Check your inbox</div><div class="ud">A formatted brief arrives automatically — grounded in real threads, ready to read.</div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 · MEP BUILD · STAGE 3 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Meeting Prep · build</div><div class="h"><span class="stg stg--advanced">Stage 3 · Advanced</span> Daily trigger at 9 AM</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb">Stage 1</span><span class="sb">Stage 2</span><span class="sb on advanced">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Add a scheduled flow</div><div class="ud"><b>Power Automate → Recurrence</b> trigger, set to <b>9:00 AM daily</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Loop today's calendar</div><div class="ud">For each meeting today → run the agent → search email → send a brief.</div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Confirm it runs on its own</div><div class="ud">One brief per meeting lands in your inbox <b>before you open your laptop</b> — no prompt needed.</div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MARKET PULSE (teams 3 & 4) · 12-20 ============ -->
+
+  <!-- 12 · MP PERSONA -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Yettel Market Pulse · your persona</div><div class="h">Same CEO — <span class="accent">a different problem</span></div></div>
+      <p class="lead">You're the same <b>CEO</b> — but markets move overnight. By the time something reaches you as a formal briefing, it's filtered and the <b>raw signal is gone</b>. Market Pulse gives you that raw signal, through your lens, before anyone else.</p>
+      <div class="pgrid">
+        <div class="prow"><div class="pl">Role</div><div class="pv">Chief Executive Officer (CEO)</div></div>
+        <div class="prow"><div class="pl">Markets</div><div class="pv">Hungary &amp; Bulgaria (top-3 CEE operator)</div></div>
+        <div class="prow"><div class="pl">Competitors in play</div><div class="pv">Magyar Telekom · 4iG · A1 · Vivacom · DIGI</div></div>
+        <div class="prow"><div class="pl">Reports to</div><div class="pv">Group CEO (Marcus Weber) · Group Board</div></div>
+        <div class="prow full"><div class="pl">The job</div><div class="pv">Know what moved in your market — before anyone tells you — and what it means for your 2026 priorities.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 · MP WHAT THE AGENT DOES -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · what the agent does</div><div class="h">Know what moved <span class="accent">before anyone tells you</span></div></div>
+      <p class="lead" style="margin-bottom:16px;"><b>You give it a market and a time window</b> — "Hungary, last 7 days" — and it scans three signal layers, read through your strategic lens, and returns a structured brief.</p>
+      <div class="c3">
+        <div class="card top"><div class="t">🏁 External</div><div class="d">Competitor pricing, network announcements, exec moves, press — <b>live from the web</b>.</div></div>
+        <div class="card top"><div class="t">⚖️ Regulatory</div><div class="d">Spectrum decisions, competition rulings, consultations — flagged &amp; interpreted.</div></div>
+        <div class="card top"><div class="t">📧 Internal</div><div class="d">What your own team is already flagging in email — before you'd have seen it.</div></div>
+      </div>
+      <div class="banner"><span class="ic">🎯</span><div>It <b>asks before it runs.</b> No market + time window? It stops and asks — "CEE, 30 days" is a different brief from "Hungary, 7 days." The discipline is the value.</div></div>
+    </div>
+  </div>
+
+  <!-- 14 · MP DATA & KNOWLEDGE SOURCES -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · data &amp; knowledge sources</div><div class="h">Five sources <span class="accent">power the brief</span></div></div>
+      <table class="dsrc">
+        <thead><tr><th>Document</th><th>What it contains</th><th>Used by</th></tr></thead>
+        <tbody>
+          <tr><td class="doc">CEO_01_Strategic_Context</td><td>Company vision, 2026 priorities, cross-functional open items — frames signals in strategic context.</td><td class="use">Both agents</td></tr>
+          <tr><td class="doc">MP_01_Competitive_Landscape</td><td>Magyar Telekom, 4iG, A1, Vivacom, DIGI — recent moves, pricing, enterprise strategy, threat assessment.</td><td class="use">Market Pulse</td></tr>
+          <tr><td class="doc">MP_02_Regulatory_Watch</td><td>Spectrum renewal consultation, Competition Authority review, GDPR audit, net-neutrality enforcement.</td><td class="use">Market Pulse</td></tr>
+          <tr><td class="doc">Work IQ — Email</td><td>Internal threads where your team has already flagged external signals.</td><td class="use">Stage 2+</td></tr>
+          <tr><td class="doc">Web Search (live)</td><td>Real-time competitor press, regulatory announcements, market news — the live signal layer.</td><td class="use">Always</td></tr>
+        </tbody>
+      </table>
+      <div class="banner"><span class="ic">🌐</span><div>Web search is <b>ON</b> for Market Pulse — the live web is the signal layer, framed by your files.</div></div>
+    </div>
+  </div>
+
+  <!-- 15 · MP WHAT GOOD LOOKS LIKE -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · what good looks like</div><div class="h">One brief. <span class="accent">Four sections.</span></div></div>
+      <div class="c2">
+        <div><div class="card top" style="height:100%;"><div class="t">📄 The brief structure</div>
+          <ul>
+            <li><b>Headline</b> — the single most important thing that moved.</li>
+            <li><b>What Moved</b> — 3-5 developments: named actor, what, when, cited source.</li>
+            <li><b>What It Means For Us</b> — tied to your 2026 priorities, by number.</li>
+            <li><b>What To Watch Next</b> — 1-2 things in the next 7-14 days. Early warning.</li>
+            <li><b>Internal Signals</b> <span style="color:var(--amber);font-weight:700;">(Stage 2+)</span> — what your team already flagged.</li>
+          </ul>
+        </div></div>
+        <div><div class="card" style="height:100%;"><div class="tag">The wow</div>
+          <div class="d" style="margin-top:4px;font-size:15px;line-height:1.55;"><b>"What It Means For Us"</b> is the difference — the external signal interpreted through <b>your</b> lens and your 2026 priorities, not a generic news summary.</div>
+          <div class="banner" style="margin-top:14px;"><span class="ic">🏁</span><div>Competitors tracked: <b>Magyar Telekom · 4iG · A1 · Vivacom · DIGI</b>.</div></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16 · MP WORKFLOW -->
+  <div class="slide">
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · the end goal</div><div class="h">What you're <span class="accent">building toward</span></div></div>
+      <div class="diagram">
+        <svg class="anim-svg" viewBox="0 0 1000 380" font-family="-apple-system,Segoe UI,Arial,sans-serif">
+          <defs>
+            <linearGradient id="mpcore" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2C3F8E"/><stop offset="100%" stop-color="#5BC4D2"/></linearGradient>
+            <marker id="mpf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1A2240"/></marker>
+            <marker id="mpg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#10B981"/></marker>
+          </defs>
+          <g data-step="1">
+            <rect x="12" y="120" width="158" height="52" rx="11" fill="#FFF8ED" stroke="#B45309" stroke-width="2"/>
+            <text x="91" y="142" text-anchor="middle" fill="#B45309" font-size="11" font-weight="800">🕘 9:00 AM daily</text>
+            <text x="91" y="159" text-anchor="middle" fill="#1A2240" font-size="9.5">auto · last 24h</text>
+            <rect x="12" y="184" width="158" height="52" rx="11" fill="#D8DCEF" stroke="#2C3F8E" stroke-width="2"/>
+            <text x="91" y="206" text-anchor="middle" fill="#2C3F8E" font-size="11" font-weight="800">💬 You ask</text>
+            <text x="91" y="223" text-anchor="middle" fill="#1A2240" font-size="9.5">market + window</text>
+          </g>
+          <g data-step="2"><line x1="172" y1="180" x2="250" y2="180" stroke="#1A2240" stroke-width="2.5" marker-end="url(#mpf)"/></g>
+          <g data-step="3">
+            <rect x="256" y="34" width="468" height="312" rx="20" fill="#F4F6FC" stroke="#2C3F8E" stroke-width="2.5" stroke-dasharray="6,4"/>
+            <text x="490" y="60" text-anchor="middle" fill="#2C3F8E" font-size="13" font-weight="800" letter-spacing="2">MARKET PULSE AGENT</text>
+            <rect x="276" y="76" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="376" y="100" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">🌐 Live web search</text>
+            <rect x="504" y="76" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="604" y="100" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">📋 Competitive landscape</text>
+            <rect x="276" y="300" width="200" height="38" rx="8" fill="#fff" stroke="#2C3F8E" stroke-width="1.4"/><text x="376" y="324" text-anchor="middle" fill="#2C3F8E" font-size="10.5" font-weight="700">⚖️ Regulatory watch</text>
+            <rect x="504" y="300" width="200" height="38" rx="8" fill="#fff" stroke="#B45309" stroke-width="1.4"/><text x="604" y="324" text-anchor="middle" fill="#B45309" font-size="10.5" font-weight="700">📧 Work IQ email</text>
+          </g>
+          <g data-step="4">
+            <circle cx="490" cy="196" r="58" fill="url(#mpcore)"/>
+            <text x="490" y="190" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">CROSS-REFERENCE</text>
+            <text x="490" y="207" text-anchor="middle" fill="rgba(255,255,255,.88)" font-size="9.5">vs your 2026 priorities</text>
+            <text x="490" y="221" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="8.5">🎯 strategic context</text>
+          </g>
+          <g data-step="5"><line x1="726" y1="190" x2="806" y2="190" stroke="#10B981" stroke-width="2.5" marker-end="url(#mpg)"/></g>
+          <g data-step="6">
+            <rect x="814" y="96" width="176" height="190" rx="13" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+            <text x="902" y="121" text-anchor="middle" fill="#10B981" font-size="11" font-weight="800">4-SECTION BRIEF</text>
+            <text x="828" y="148" fill="#1A2240" font-size="10.5">① Headline</text>
+            <text x="828" y="172" fill="#1A2240" font-size="10.5">② What moved</text>
+            <text x="828" y="196" fill="#1A2240" font-size="10.5">③ What it means</text>
+            <text x="828" y="220" fill="#1A2240" font-size="10.5">④ What to watch</text>
+            <text x="828" y="244" fill="#B45309" font-size="10.5">⑤ Internal signals</text>
+            <text x="902" y="272" text-anchor="middle" fill="#10B981" font-size="10.5" font-weight="700">📧 auto-emailed</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17 · MP BUILD · SETUP -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · build</div><div class="h"><span class="stg stg--setup">Setup</span> Stand up the agent</div></div>
+      <div class="stagebar"><span class="sb on setup">Setup</span><span class="sb">Stage 1</span><span class="sb">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Create the agent</div><div class="ud">In Copilot Studio: <b>Create → New agent → Configure</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Name it</div><div class="ud">Give it a clear, ownable name.</div><div class="paste"><div class="px">Yettel Market Pulse</div><button class="cpb" data-copy="Yettel Market Pulse">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Add the Instructions</div><div class="ud">Include the <b>CRITICAL BEHAVIOUR</b> block — we break it into plain blocks on the <b>next screen →</b></div></div></div>
+          <div class="ustep"><div class="un">4</div><div><div class="ut">Add Knowledge</div><div class="ud">Upload the competitive &amp; strategic files (add regulatory).</div><div class="paste"><div class="px">MP_01_Competitive_Landscape
+CEO_01_Strategic_Context
+MP_02_Regulatory_Watch</div><button class="cpb" data-copy="MP_01_Competitive_Landscape, CEO_01_Strategic_Context, MP_02_Regulatory_Watch">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">5</div><div><div class="ut">Set the toggles</div><div class="ud"><b>Web search ON</b> — plus your sources. The live web is the signal layer.</div></div></div>
+          <div class="ustep"><div class="un">6</div><div><div class="ut">Add starter prompts</div><div class="ud">Scoped prompts only — market + window.</div><div class="paste"><div class="px">Hungary, last 7 days
+Belgrade, last 30 days
+Competitor moves in Bulgaria this week
+Regulatory signals, last 14 days</div><button class="cpb" data-copy="Hungary, last 7 days | Belgrade, last 30 days | Competitor moves in Bulgaria this week | Regulatory signals, last 14 days">📋 Copy</button></div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17b · MP BUILD · INSTRUCTIONS -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · build · the instructions</div><div class="h"><span class="stg stg--setup">Setup</span> The Instructions, in four blocks</div></div>
+      <div class="c2">
+        <div class="card top"><div class="t">🎭 Who it is</div><div class="d">"You are <b>Yettel Market Pulse</b> for the CEO."</div></div>
+        <div class="card top"><div class="t">⚠️ Critical behaviour</div><div class="d">If the <b>market OR the time window is missing, stop and ask</b> — never a generic brief.</div></div>
+        <div class="card top"><div class="t">📋 Output</div><div class="d"><b>Headline</b> · <b>What Moved</b> (actor + source) · <b>What It Means For Us</b> (vs 2026 priorities) · <b>What To Watch Next</b>.</div></div>
+        <div class="card top"><div class="t">📧 Stage 2</div><div class="d">Add an <b>Internal Signals</b> section from your team's flagged email.</div></div>
+      </div>
+      <div class="paste" style="margin-top:16px;"><div class="px">You are Yettel Market Pulse for the CEO. CRITICAL: if the market OR the time window is missing, stop and ask — never produce a generic brief. Output: Headline · What Moved (named actor + source) · What It Means For Us (vs 2026 priorities) · What To Watch Next · (Stage 2) Internal Signals.</div><button class="cpb" data-copy="You are Yettel Market Pulse for the CEO. CRITICAL: if the market OR the time window is missing, stop and ask — never produce a generic brief. Output: Headline · What Moved (named actor + source) · What It Means For Us (vs 2026 priorities) · What To Watch Next · (Stage 2) Internal Signals.">📋 Copy full</button></div>
+    </div>
+  </div>
+
+  <!-- 18 · MP BUILD · STAGE 1 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · build</div><div class="h"><span class="stg stg--basic">Stage 1 · Basic</span> Intelligence on demand</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb on basic">Stage 1</span><span class="sb">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Open the Test panel</div><div class="ud">Give the knowledge a moment to index, then test the guardrail.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Try a vague ask</div><div class="ud">It must <b>refuse</b> and ask for a market + time window.</div><div class="paste"><div class="px">Give me a market briefing.</div><button class="cpb" data-copy="Give me a market briefing.">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Now scope it</div><div class="ud">Give a market + window → it returns the 4-section brief with cited live sources.</div><div class="paste"><div class="px">Hungary, last 7 days.</div><button class="cpb" data-copy="Hungary, last 7 days.">📋 Copy</button></div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19 · MP BUILD · STAGE 2 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · build</div><div class="h"><span class="stg stg--intermediate">Stage 2 · Intermediate</span> Internal + external</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb">Stage 1</span><span class="sb on intermediate">Stage 2</span><span class="sb">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Connect Work IQ</div><div class="ud">Add the source: <b>My emails (Outlook)</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Add the Internal Signals instruction</div><div class="ud">Append to Instructions so it scans internal flags and auto-emails.</div><div class="paste"><div class="px">Also scan my internal email for signals my team has flagged, add an Internal Signals section corroborating the external findings, and email me the brief.</div><button class="cpb" data-copy="Also scan my internal email for signals my team has flagged, add an Internal Signals section corroborating the external findings, and email me the brief.">📋 Copy</button></div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Test it</div><div class="ud">The brief now includes Internal Signals and arrives in your inbox.</div><div class="paste"><div class="px">Bulgaria, last 14 days.</div><button class="cpb" data-copy="Bulgaria, last 14 days.">📋 Copy</button></div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 20 · MP BUILD · STAGE 3 -->
+  <div class="slide" data-nozone>
+    <div class="inner">
+      <button class="pickback" data-goto="3">↩ Back to your mission</button>
+      <div class="shead"><div class="eyebrow">Market Pulse · build</div><div class="h"><span class="stg stg--advanced">Stage 3 · Advanced</span> Daily pulse at 9 AM</div></div>
+      <div class="stagebar"><span class="sb">Setup</span><span class="sb">Stage 1</span><span class="sb">Stage 2</span><span class="sb on advanced">Stage 3</span></div>
+      <div class="ubuild">
+        <div class="usteps">
+          <div class="ustep"><div class="un">1</div><div><div class="ut">Add a scheduled flow</div><div class="ud"><b>Power Automate → Recurrence</b> trigger, set to <b>9:00 AM daily</b>.</div></div></div>
+          <div class="ustep"><div class="un">2</div><div><div class="ut">Fix the scope</div><div class="ud">No input needed — <b>last 24 hours</b>, covering <b>Hungary + Bulgaria</b>.</div></div></div>
+          <div class="ustep"><div class="un">3</div><div><div class="ut">Confirm the daily pulse</div><div class="ud">A market brief lands every morning <b>before your first meeting</b> — you're current without asking.</div></div></div>
+        </div>
+        <div class="unext"><button class="unlocknext">Next step ▸</button><span class="uprog"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 21 · CLOSE -->
+  <div class="slide dark">
+    <div class="inner">
+      <div class="shead"><div class="eyebrow">Nicely done</div><div class="h">You built something <span class="accent">you'll actually use</span></div></div>
+      <div class="why">
+        <div class="wc"><div class="i">🤖</div><div class="t">Your agent, live</div><div class="d">Built end-to-end on <b>your</b> account, grounded in <b>your</b> world.</div></div>
+        <div class="wc"><div class="i">🧭</div><div class="t">One pattern</div><div class="d"><b>Basic → Intermediate → Advanced</b> — reuse it for any function, any team.</div></div>
+        <div class="wc"><div class="i">📣</div><div class="t">Publish to Teams</div><div class="d">Share it so the whole org can use what you built.</div></div>
+        <div class="wc"><div class="i">↩</div><div class="t">Want the other one?</div><div class="d">Press <b>Home</b> to go back and explore the other use case.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="zone zone--prev" id="zprev"></div>
+<div class="zone zone--next" id="znext"></div>
+<button class="fs" id="fs" title="Fullscreen (F)">⛶</button>
+<div class="brand"><img src="acceler_logo.png" alt="acceler"></div>
+<div class="nav" id="nav"><button id="navPrev" aria-label="Previous">‹</button><div class="dots" id="dots"></div><button id="navNext" aria-label="Next">›</button><span class="count" id="navCount"></span></div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')], total=slides.length;
+  let cur=0; const $=id=>document.getElementById(id);
+
+  const TEAMS={
+    1:{name:'The Falcons',members:['Zoltán Dávid','Emőke Erdélyi','Enikő Szalai','Zsolt Kozma'],uc:'meeting'},
+    2:{name:'The Titans',members:['József Takács','Kata Urbancsok','Balázs Kővári','Balázs Dr. Tóth'],uc:'meeting'},
+    3:{name:'The Vanguard',members:['Tamás Bóday','Judit Kübler-Andrási','Igor Prerovsky','György Gaszmann'],uc:'market'},
+    4:{name:'The Phoenix',members:['Zoltán Seprényi','Peter Jantosovic','Tamás Ötvös','Balázs Nagy'],uc:'market'},
+  };
+  const UC={
+    meeting:{name:'Yettel Meeting Prep',fn:'Walking in cold',goto:4,desc:"Walk into any meeting knowing who's in the room, what's open, and how to open — in under 60 seconds.",tags:['🗓️ Calendar','📧 Email','🕘 9 AM daily']},
+    market:{name:'Yettel Market Pulse',fn:'Staying current',goto:14,desc:"Know what moved in your market — competitor moves, regulator signals, your team's own flags — before anyone tells you.",tags:['🌐 Live web','📧 Work IQ','🕘 9 AM daily']},
+  };
+  // learner view: navigation is locked to the chosen track
+  const SHARED_PRE=[0,1,2,3], CLOSE=total-1;
+  const TRACKS={ meeting:[4,5,6,7,8,9,10,11,12,13], market:[14,15,16,17,18,19,20,21,22,23] };
+  let track=null;
+  function route(){ return track ? SHARED_PRE.concat(TRACKS[track],[CLOSE]) : SHARED_PRE.slice(); }
+
+  let TEAM=1, NAME='';
+  function renderMission(){
+    const t=TEAMS[TEAM]||TEAMS[1];
+    $('missionTeam').textContent='👥 '+t.name; var w=$('missionWelcome'); if(w) w.textContent=NAME? ('Welcome, '+NAME+' · your team') : 'Your team';
+    $('missionMembers').innerHTML=t.members.map(m=>'<span class="rchip">👤 '+m+'</span>').join('');
+    const u=UC[t.uc];
+    $('missionCard').innerHTML='<button class="pcard" data-goto="'+u.goto+'"><div class="fn">'+u.fn+'</div><div class="ag">'+u.name+'</div><div class="pd">'+u.desc+'</div><div class="tags">'+u.tags.map(x=>'<span class="ptag">'+x+'</span>').join('')+'</div></button>';
+  }
+  renderMission();
+
+  const dotsEl=$('dots');
+  function buildDots(){ const r=route(); dotsEl.innerHTML=''; r.forEach(idx=>{ const d=document.createElement('div'); d.className='dot'; d.addEventListener('click',()=>goTo(idx)); dotsEl.appendChild(d); }); }
+  function syncNav(){ const r=route(); const pos=r.indexOf(cur); const ch=dotsEl.children; for(let i=0;i<ch.length;i++){ ch[i].classList.toggle('active', r[i]===cur); } const nc=$('navCount'); if(nc) nc.textContent=((pos<0?1:pos+1))+' / '+r.length; const a=ch[pos>=0?pos:0]; if(a) a.scrollIntoView({inline:'center',block:'nearest'}); }
+
+  function progress(){ $('progress').style.width=((cur+1)/total*100)+'%'; const c=$('counter'); c.textContent=(cur+1)+' / '+total; c.classList.add('on'); clearTimeout(progress._t); progress._t=setTimeout(()=>c.classList.remove('on'),2000); syncNav(); }
+  function goTo(n){ if(n<0||n>=total) return; slides[cur].classList.remove('active'); cur=n; slides[cur].classList.add('active');
+    const nz=slides[cur].hasAttribute('data-nozone'); $('zprev').style.pointerEvents=nz?'none':'auto'; $('znext').style.pointerEvents=nz?'none':'auto'; progress(); }
+  function step(dir){ const r=route(); let i=r.indexOf(cur); if(i<0){ goTo(r[0]); return; } let j=i+dir; if(j<0||j>=r.length) return; goTo(r[j]); }
+
+  function setTrack(uc){ track=uc; buildDots(); }
+
+  // progressive build steps
+  function revealPasteFor(b,i){ var it=b.querySelector('.pasteitem[data-step="'+i+'"]'); if(it) it.classList.remove('locked'); }
+  function initUsteps(){
+    document.querySelectorAll('.ubuild').forEach(function(b){
+      var sl=b.closest('.slide'); if(sl) sl.classList.add('bld');
+      var steps=[].slice.call(b.querySelectorAll('.ustep'));
+      var col=document.createElement('div'); col.className='pastecol'; var any=false;
+      steps.forEach(function(s,i){ var p=s.querySelector('.paste'); if(p){ any=true; var item=document.createElement('div'); item.className='pasteitem locked'; item.setAttribute('data-step',i); var ttl=s.querySelector('.ut'); item.innerHTML='<div class="pilab">'+(ttl?ttl.textContent:'Paste')+'</div>'; item.appendChild(p); col.appendChild(item); } });
+      if(any){ var grid=document.createElement('div'); grid.className='bguide2'; var left=document.createElement('div'); left.className='ubleft'; while(b.firstChild){ left.appendChild(b.firstChild); } var hd=document.createElement('div'); hd.className='pastehd'; hd.textContent='Ready to paste'; col.insertBefore(hd,col.firstChild); grid.appendChild(left); grid.appendChild(col); b.appendChild(grid); }
+      steps.forEach(function(s,i){ s.classList.toggle('locked', i>0); s.classList.toggle('active', i===0); });
+      var p0=b.querySelector('.uprog'); if(p0) p0.textContent='1 of '+steps.length+' · click to reveal each step';
+      revealPasteFor(b,0);
+    });
+  }
+  function renderTeamPicker(){ var html=''; Object.keys(TEAMS).forEach(function(k){ var tm=TEAMS[k]; html+='<div class="tcard"><div class="tn">Table '+k+'</div><div class="tname">'+tm.name+'</div><div class="tnames">'+tm.members.map(function(m){return '<button class="namebtn" data-team="'+k+'" data-name="'+m+'">👤 '+m+'</button>';}).join('')+'</div></div>'; }); document.getElementById('teamPicker').innerHTML=html; }
+  renderTeamPicker();
+  initUsteps();
+  function injectCTAs(){ [].concat(TRACKS.meeting,TRACKS.market).forEach(function(i){ var sl=slides[i]; if(!sl) return; if(sl.querySelector('.ubuild')) return; if(sl.querySelector('.ctarow')) return; var inner=sl.querySelector('.inner'); var d=document.createElement('div'); d.className='ctarow'; d.innerHTML='<button class="contbtn" data-next>Continue →</button>'; inner.appendChild(d); }); }
+  injectCTAs();
+
+  document.addEventListener('click',e=>{
+    const nm=e.target.closest('[data-name]'); if(nm){ TEAM=+nm.dataset.team; NAME=nm.dataset.name; setTrack(TEAMS[TEAM].uc); renderMission(); goTo(3); return; }
+    const cn=e.target.closest('[data-next]'); if(cn){ step(1); return; }
+    const gt=e.target.closest('[data-goto]'); if(gt){ goTo(parseInt(gt.dataset.goto)); return; }
+    const nb=e.target.closest('.unlocknext'); if(nb){ if(nb.classList.contains('cont')){ step(1); return; } const b=nb.closest('.ubuild'); var steps=[].slice.call(b.querySelectorAll('.ustep')); var locked=b.querySelector('.ustep.locked');
+      if(locked){ steps.forEach(function(s){s.classList.remove('active');}); locked.classList.remove('locked'); locked.classList.add('active'); locked.scrollIntoView({block:'nearest'}); revealPasteFor(b, steps.indexOf(locked)); }
+      var shown=steps.filter(function(s){return !s.classList.contains('locked');}).length; var p=b.querySelector('.uprog'); if(p) p.textContent=shown+' of '+steps.length+' shown';
+      if(!b.querySelector('.ustep.locked')){ nb.textContent='Continue →'; nb.classList.add('cont'); } return; }
+    const cp=e.target.closest('.cpb'); if(cp){ const tx=cp.getAttribute('data-copy'); if(navigator.clipboard&&tx) navigator.clipboard.writeText(tx); const o=cp.textContent; cp.textContent='✓ Copied'; setTimeout(()=>cp.textContent=o,1200); return; }
+  });
+  // CTA-only: advance by clicking buttons only. Keep F for fullscreen.
+  document.addEventListener('keydown',e=>{
+    if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+  });
+  $('fs').addEventListener('click',()=>{ if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); });
+  buildDots(); progress();
+</script>
+</body>
+</html>
